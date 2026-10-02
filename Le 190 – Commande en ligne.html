@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Le 190 – Commande en ligne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#140805;--card:#241008;--line:#4a2418;--y:#ffd21f;--r:#e8352b;--t:#fff4e6;--m:#c9a898;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.4 system-ui,-apple-system,sans-serif;padding-bottom:80px}
+h1,h2,h3,.bn{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.04em;font-weight:400}
+header{text-align:center;padding:22px 16px 14px;background:linear-gradient(#3a0f08,var(--bg))}
+.logo{display:inline-block;border:3px solid var(--y);border-radius:14px;padding:4px 22px;font-size:46px;color:#fff;text-shadow:0 0 12px var(--y);box-shadow:0 0 14px #ffd21f88}
+.sub{color:var(--m);font-size:13px;margin-top:8px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:8px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--line)}
+nav button{flex:none;background:var(--card);color:var(--t);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font:inherit}
+nav button.on{background:var(--y);color:#222;border-color:var(--y);font-weight:700}
+main{max-width:720px;margin:0 auto;padding:12px}
+.it{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;width:100%;color:inherit;text-align:left;font:inherit}
+.ic{font-size:30px}.it b{display:block}.it small{color:var(--m)}.pr{margin-left:auto;text-align:right;white-space:nowrap;color:var(--y);font-weight:700}
+.new{background:var(--r);font-size:10px;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle}
+#bar{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:#0d0503;border-top:1px solid var(--line);z-index:6}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;background:var(--y);color:#222;font:700 16px system-ui;cursor:pointer}
+.btn:disabled{opacity:.4}.btn.alt{background:var(--card);color:var(--t);border:1px solid var(--line)}
+.ov{position:fixed;inset:0;background:#000b;z-index:10;display:flex;align-items:flex-end;justify-content:center}
+.pn{background:var(--bg);width:100%;max-width:720px;max-height:92%;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.full{align-items:stretch}.full .pn{max-height:100%;border-radius:0;height:100%}
+.hd{display:flex;justify-content:space-between;align-items:center}.hd h2{margin:0;font-size:28px;color:var(--y)}
+.x{background:none;border:0;color:var(--t);font-size:26px}
+.g{margin:14px 0 6px;font-weight:700;color:var(--y)}
+.op{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--card);cursor:pointer;width:100%;color:inherit;font:inherit;text-align:left}
+.op.on{border-color:var(--y);box-shadow:inset 0 0 0 1px var(--y)}.op.off{opacity:.35}
+select,input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--t);font:inherit;margin-bottom:8px}
+.q{display:flex;align-items:center;gap:12px}.q button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--t);font-size:18px}
+.row{display:flex;justify-content:space-between;padding:4px 0}.tot{font-size:18px;font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.warn{background:#5a1a12;border-radius:10px;padding:10px;margin:8px 0;font-size:13px}
+.seg{display:flex;gap:8px;margin-bottom:10px}.seg .op{justify-content:center;margin:0}
+.st{display:flex;gap:10px;align-items:center;padding:8px 0;color:var(--m)}.st i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:inline-grid;place-items:center;font-style:normal;font-size:12px}
+.st.ok{color:var(--t)}.st.ok i{background:var(--y);border-color:var(--y);color:#222}
+svg{width:100%;border-radius:12px;background:#1d120d;border:1px solid var(--line)}
+</style></head><body>
+<header><div class="logo bn">LE 190</div><div class="sub">Sandwich · Burger · Tacos · Riz crousty<br>Ouvert 7/7 · 11h–14h / 18h–23h (dimanche : le soir) · Livraison 2 €</div></header>
+<nav id="nav"></nav><main id="list"></main>
+<div id="bar" hidden><button class="btn" onclick="showCart()" id="barb"></button></div>
+<div id="ov"></div>
+<script>
+const $=s=>document.querySelector(s),fmt=n=>n.toFixed(2).replace('.',',')+' €';
+const DR=['Coca-Cola','Coca-Cola Zéro','Fanta','Sprite'];
+const bm=(n,d,s,m,nw)=>({n,d,nw,modes:[{l:'Seul',p:s},{l:'Menu',p:m,dr:1,sub:'frites + boisson'}]});
+const ex=(a,b)=>[...a.map(x=>[x,.5]),...b.map(x=>[x,1])];
+const CATS=[
+{id:'burgers',t:'Burgers',e:'🍔',items:[
+bm('Cheese','Ketchup, cornichons, steak 45g',3.5,6),bm('Double','Ketchup, cornichons, 2 steaks 45g',5,7),bm('Fish Burger','Sauce fish, salade, poisson pané',5,7),bm('Chicken Burger','Sauce Biggy, salade, tomates, poulet pané',6,8),bm('Tower','Sauce Biggy, salade, tomates, poulet pané, galette de pommes de terre',6.5,8.5),
+bm('Big Cheese','Sauce poivre, salade, 2 steaks 45g, cheddar, oignons frits',6.5,8.5),bm('Royal','Salade, tomate, oignons rouges, moutarde, ketchup, cheddar, steak 90g',6.5,8.5),bm('Beef Toasty','Sauce poivre, salade, tomates, oignons, bacon, steak 90g',6.5,9),bm('Chicken Toasty','Sauce poivre, salade, tomates, oignons, bacon, poulet pané',6.5,9),bm('Le Big 190','3 steaks, salade, tomates, oignons, cheddar, bacon',9,11.5,1),
+bm('Montagnard','Salade, tomates, sauce BBQ, raclette, bacon, oignons rouges, steak 90g',6.5,9),bm('Classic','Sauce Biggy, salade, tomates, oignons rouges, galette, steak 90g',6.5,9),bm('Wrap Poulet','Mayonnaise, salade, tomate, oignons, tenders, galette',6.5,8.5),bm('Wrap Chèvre','Mayonnaise, salade, tomate, oignons frits, chèvre pané, galette',6.5,8.5),bm('Brioché','Steak 90g, galette de pommes de terre, crudités',6.5,8.5),bm('Long Bacon','Steak 90g, galette, bacon, crudités',6.5,8.5)]},
+{id:'sand',t:'Sandwichs',e:'🥙',items:[
+bm('Kebab','Kebab, salade, tomates, oignons',7,8.5),bm('Boursin','Salade, tomates, oignons, escalope au boursin',6.5,9),bm('Curry','Salade, tomates, oignons, poulet curry',6.5,9),bm('Triple Steak','Salade, tomates, oignons, 3 steaks 45g, cheddar',6.5,9),bm('Poulet Tandoori','Brochette tandoori, salade, tomates, oignons',7.5,8.5),bm('Régal','Salade, tomates, oignons, cordon bleu, steak 45g',6.5,9),bm('Le Blindé','Salade, tomates, oignons, 2 steaks, bacon, œuf',6.5,9),bm('Le Quattro','Salade, tomates, oignons, 4 steaks 45g, poulet fumé, œuf',6.5,9.5)]},
+{id:'menus',t:'Menus duo',e:'🍟',items:[
+...[['B1',10,'Cheese + Double Cheese'],['B2',11.9,'Long Bacon + Big Cheese'],['B3',11.9,'Beef Toasty + Fish'],['B4',11.9,'Chicken Beef + 3 Tenders'],['B5',11.9,'Chicken Burger + Royal']].map(([n,p,d])=>({n:'Menu '+n,d:d+' · frites + boisson',modes:[{l:'Menu',p,dr:1}]})),
+{n:'Croque Monsieur',d:'Jambon de dinde, fromage',modes:[{l:'Seul',p:5},{l:'Avec frites',p:7}]},
+{n:'La Box 190',d:'1 tacos ou 1 wrap poulet + 1 burger, frites et boisson',nw:1,modes:[{l:'Box',p:15.9,dr:1}],groups:[{n:'Au choix',max:1,min:1,o:[['Tacos',0],['Wrap poulet',0]]}]}]},
+{id:'tacos',t:'Tacos',e:'🌯',items:[{n:'Tacos',d:'Composez votre tacos en 4 étapes',modes:[{l:'M · 1 tortilla, 1 viande',p:7.5,m:1},{l:'L · 1 tortilla, 2 viandes',p:9,m:2},{l:'XL · 2 tortillas, 3 viandes',p:11,m:3}],groups:[
+{n:'Viandes',max:'m',min:1,o:['Escalope de poulet','Bœuf haché','Cordon bleu','Merguez','Tenders','Nuggets','Kebab'].map(x=>[x,0])},
+{n:'Sauces (2 max)',max:2,min:1,o:['Algérienne','Harissa','Mayonnaise','Barbecue','Ketchup','Curry','Poivre','Fish','Biggy','Chili Thaï','Samouraï','Andalouse'].map(x=>[x,0])},
+{n:'Extras',max:9,o:ex(['Œuf','Chèvre','Cheddar','Emmental','Raclette','Boursin'],['Jambon','Poulet fumé','Bacon','Lardons'])},
+{n:'Gratiné',max:1,o:[['Chèvre miel',1.5],['Mozzarella lardons',1.5],['Raclette',1.5]]},
+{n:'Frites',max:1,o:[['Ajouter des frites',2]]}]}]},
+{id:'riz',t:'Riz crousty',e:'🍚',items:[{n:'Riz Crousty',d:'Avec boisson',nw:1,modes:[{l:'Avec boisson',p:10,dr:1}],groups:[{n:'3 sauces au choix',max:3,min:1,o:[['Sauce sucrée',0],['Sauce curry',0],['Sauce barbecue',0]]}]}]},
+{id:'tex',t:'Tex-Mex',e:'🧀',items:[['Tenders',6],['Jalapeños',5],['Mozzasticks',5],['Nuggets',5],['Oignons',5],['Camemberts panés',5]].map(([n,p])=>({n,d:'Portion de 5',modes:[{l:'x5',p}]})).concat([{n:'Frites',d:'Portion de frites',modes:[{l:'Portion',p:2}]}])},
+{id:'sal',t:'Salades & enfant',e:'🥗',items:[{n:'La Chef',d:'Salade, tomates, chèvre, lardons',modes:[{l:'Salade',p:7}]},{n:'La Mixte',d:'Salade, tomates, olives',modes:[{l:'Salade',p:4}]},
+{n:'Menu Enfant',d:'Frites + Capri-Sun + compote',modes:[{l:'Menu enfant',p:6.5}],groups:[{n:'Au choix',max:1,min:1,o:[['4 nuggets',0],['Cheese',0]]}]}]},
+{id:'bd',t:'Boissons & desserts',e:'🥤',items:[{n:'Canette 33cl',d:'',modes:[{l:'Canette',p:1.5}],groups:[{n:'Boisson',max:1,min:1,o:DR.map(x=>[x,0])}]},{n:'Bouteille 1,5L',d:'',modes:[{l:'Bouteille',p:3}],groups:[{n:'Boisson',max:1,min:1,o:DR.map(x=>[x,0])}]},{n:'Tiramisu',d:'',modes:[{l:'Part',p:3}]},{n:'Glace Häagen-Dazs',d:'',modes:[{l:'100 ml',p:4},{l:'500 ml',p:7}]}]}
+];
+CATS.forEach(c=>c.items.forEach((i,k)=>{i.id=c.id+k;i.e=c.e}));
+const ALL=CATS.flatMap(c=>c.items);let cart=[],cur,sel,ck={mode:'liv',name:'',tel:'',addr:'',pay:'card'},tm;
+$('#nav').innerHTML=CATS.map((c,i)=>`<button class="${i?'':'on'}" onclick="cat(${i},this)">${c.t}</button>`).join('');
+function cat(i,b){document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw(i)}
+function draw(i){const c=CATS[i];$('#list').innerHTML=`<h2 class="bn" style="font-size:30px;color:var(--y)">${c.t}</h2>`+c.items.map(it=>`<button class="it" onclick="openItem('${it.id}')"><span class="ic">${it.e}</span><span><b>${it.n}${it.nw?'<span class="new">NEW</span>':''}</b><small>${it.d}</small></span><span class="pr">${it.modes.length>1?'dès ':''}${fmt(Math.min(...it.modes.map(m=>m.p)))}</span></button>`).join('')}
+draw(0);
+function openItem(id){cur=ALL.find(i=>i.id==id);sel={m:0,g:{},d:0,q:1};modal()}
+const gmax=g=>g.max=='m'?cur.modes[sel.m].m:g.max;
+function price(){const m=cur.modes[sel.m];let p=m.p;(cur.groups||[]).forEach((g,gi)=>(sel.g[gi]||[]).forEach(o=>p+=g.o[o][1]));return p}
+function valid(){return (cur.groups||[]).every((g,gi)=>(sel.g[gi]||[]).length>=(g.min||0))}
+function modal(){const m=cur.modes[sel.m];
+$('#ov').innerHTML=`<div class="ov" onclick="if(event.target==this)closeOv()"><div class="pn"><div class="hd"><h2>${cur.n}</h2><button class="x" onclick="closeOv()">×</button></div><small style="color:var(--m)">${cur.d}</small>
+${cur.modes.length>1?`<div class="g">Je choisis…</div><div class="seg">${cur.modes.map((x,i)=>`<button class="op ${i==sel.m?'on':''}" onclick="sel.m=${i};sel.g={};modal()"><span>${x.l}${x.sub?`<br><small>${x.sub}</small>`:''}<br><b style="color:var(--y)">${fmt(x.p)}</b></span></button>`).join('')}</div>`:''}
+${(cur.groups||[]).map((g,gi)=>{const mx=gmax(g),s=sel.g[gi]||[];return `<div class="g">${g.n}${mx>1?` (max ${mx})`:''}</div>`+g.o.map((o,oi)=>{const on=s.includes(oi);return `<button class="op ${on?'on':''} ${!on&&s.length>=mx&&mx>1?'off':''}" onclick="tg(${gi},${oi})"><span>${on?'✓ ':''}${o[0]}</span><span>${o[1]?'+'+fmt(o[1]):''}</span></button>`}).join('')}).join('')}
+${m.dr?`<div class="g">Ma boisson</div><select onchange="sel.d=this.value">${DR.map((d,i)=>`<option value="${i}" ${i==sel.d?'selected':''}>${d}</option>`).join('')}</select>`:''}
+<div class="hd" style="margin-top:14px"><div class="q"><button onclick="sel.q=Math.max(1,sel.q-1);modal()">−</button><b>${sel.q}</b><button onclick="sel.q++;modal()">+</button></div></div>
+<button class="btn" style="margin-top:12px" ${valid()?'':'disabled'} onclick="addCart()">Ajouter · ${fmt(price()*sel.q)}</button></div></div>`}
+function tg(gi,oi){const g=cur.groups[gi],mx=gmax(g);let s=sel.g[gi]||[];if(s.includes(oi))s=s.filter(x=>x!=oi);else if(mx==1)s=[oi];else if(s.length<mx)s=[...s,oi];sel.g[gi]=s;modal()}
+function closeOv(){$('#ov').innerHTML=''}
+function addCart(){const m=cur.modes[sel.m];const d=[m.l];(cur.groups||[]).forEach((g,gi)=>{const s=sel.g[gi]||[];if(s.length)d.push(s.map(o=>g.o[o][0]).join(', '))});if(m.dr)d.push(DR[sel.d]);
+const e={n:cur.n,d:d.join(' · '),u:price(),q:sel.q},k=cart.find(c=>c.n==e.n&&c.d==e.d);k?k.q+=e.q:cart.push(e);closeOv();bar()}
+const sub=()=>cart.reduce((a,c)=>a+c.u*c.q,0),cnt=()=>cart.reduce((a,c)=>a+c.q,0);
+function bar(){$('#bar').hidden=!cart.length;$('#barb').textContent=`Voir mon panier · ${cnt()} article${cnt()>1?'s':''} · ${fmt(sub())}`}
+function sheet(h,b){$('#ov').innerHTML=`<div class="ov full"><div class="pn"><div class="hd"><h2>${h}</h2><button class="x" onclick="closeOv()">×</button></div>${b}</div></div>`}
+function showCart(){if(!cart.length)return closeOv();sheet('Mon panier',cart.map((c,i)=>`<div class="it" style="display:block"><div class="row"><b>${c.n}</b><span class="pr">${fmt(c.u*c.q)}</span></div><small>${c.d}</small><div class="q" style="margin-top:6px"><button onclick="qty(${i},-1)">−</button><b>${c.q}</b><button onclick="qty(${i},1)">+</button></div></div>`).join('')+`<div class="row tot"><span>Sous-total</span><span>${fmt(sub())}</span></div><button class="btn" style="margin-top:12px" onclick="showCk()">Commander</button>`)}
+function qty(i,d){cart[i].q+=d;if(cart[i].q<1)cart.splice(i,1);bar();showCart()}
+const fee=()=>ck.mode=='liv'?2:0;
+function showCk(msg){const l=ck.mode=='liv';sheet('Ma commande',`<div class="seg"><button class="op ${l?'on':''}" onclick="ck.mode='liv';showCk()">🛵 Livraison</button><button class="op ${l?'':'on'}" onclick="ck.mode='emp';showCk()">🏪 À emporter</button></div>
+<input placeholder="Nom" value="${ck.name}" oninput="ck.name=this.value"><input placeholder="Téléphone" type="tel" value="${ck.tel}" oninput="ck.tel=this.value">
+${l?`<input placeholder="Adresse de livraison (rayon 8 km)" value="${ck.addr}" oninput="ck.addr=this.value">`:'<small style="color:var(--m)">À retirer au 77 avenue de Flandres, Estrées-Saint-Denis</small>'}
+<div class="g">Paiement</div><div class="seg"><button class="op ${ck.pay=='card'?'on':''}" onclick="ck.pay='card';showCk()">💳 Carte</button><button class="op ${ck.pay=='cash'?'on':''}" onclick="ck.pay='cash';showCk()">💶 Espèces</button></div>
+${ck.pay=='card'?`<input placeholder="Numéro de carte" inputmode="numeric" maxlength="19"><div style="display:flex;gap:8px"><input placeholder="MM/AA"><input placeholder="CVC" maxlength="4"></div><small style="color:var(--m)">Paiement simulé (version démo)</small>`:''}
+<div class="row"><span>Sous-total</span><span>${fmt(sub())}</span></div>${l?`<div class="row"><span>Livraison</span><span>${fmt(2)}</span></div>`:''}<div class="row tot"><span>Total</span><span>${fmt(sub()+fee())}</span></div>
+${msg?`<div class="warn">${msg}</div>`:''}<button class="btn" style="margin-top:8px" onclick="pay()">${ck.pay=='card'?'Payer':'Valider'} ${fmt(sub()+fee())}</button><button class="btn alt" style="margin-top:8px" onclick="showCart()">Retour au panier</button>`)}
+function pay(){if(!ck.name.trim()||!ck.tel.trim()||(ck.mode=='liv'&&!ck.addr.trim()))return showCk('Merci de remplir nom, téléphone et adresse.');if(ck.mode=='liv'&&sub()<20)return showCk('Minimum de commande en livraison : 20 €. Ajoute des articles !');
+sheet('Paiement…','<p style="text-align:center;font-size:40px">⏳</p><p style="text-align:center">Traitement en cours</p>');setTimeout(track,1400)}
+const PATH=[[50,170],[50,110],[180,110],[180,50],[300,50]];
+function pos(t){const L=[];let tot=0;for(let i=1;i<PATH.length;i++){const d=Math.hypot(PATH[i][0]-PATH[i-1][0],PATH[i][1]-PATH[i-1][1]);L.push(d);tot+=d}let r=t*tot;for(let i=0;i<L.length;i++){if(r<=L[i]){const k=r/L[i];return [PATH[i][0]+(PATH[i+1][0]-PATH[i][0])*k,PATH[i][1]+(PATH[i+1][1]-PATH[i][1])*k]}r-=L[i]}return PATH[PATH.length-1]}
+function track(){const no='190-'+Math.floor(1000+Math.random()*9000),l=ck.mode=='liv',t0=Date.now(),total=sub()+fee();
+const S=l?['Commande confirmée','En préparation','Le livreur est en route','Livrée']:['Commande confirmée','En préparation','Prête à retirer'];
+sheet('Suivi · #'+no,`<div class="warn" style="background:#143a1e">✅ ${ck.pay=='card'?'Paiement accepté':'Paiement en espèces à la réception'} · ${fmt(total)}</div><div id="stp"></div>${l?`<svg viewBox="0 0 360 220"><g stroke="#3a2a22" stroke-width="10" fill="none"><path d="M10 110H350M180 10V210M50 10V210M10 50H350M10 170H350M300 10V210"/></g><polyline points="${PATH.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#ffd21f" stroke-width="4" stroke-dasharray="8 6"/><text x="50" y="195" fill="#fff" font-size="12" text-anchor="middle">🍔 Le 190</text><text x="300" y="32" font-size="22" text-anchor="middle">🏠</text><text id="cr" font-size="26" text-anchor="middle" x="50" y="170">🛵</text></svg><div id="eta" class="row tot"></div><div class="row"><span>Livreur : Karim</span><a href="tel:0344922875" style="color:var(--y)">📞 Appeler</a></div>`:''}<button class="btn alt" style="margin-top:12px" onclick="done()">Fermer</button>`);
+cart=[];bar();clearInterval(tm);
+tm=setInterval(()=>{const s=(Date.now()-t0)/1000,ph=s<4?0:s<14?1:(l?(s<44?2:3):2);if(!$('#stp')){clearInterval(tm);return}
+$('#stp').innerHTML=S.map((x,i)=>`<div class="st ${i<=ph?'ok':''}"><i>${i<=ph?'✓':''}</i>${x}</div>`).join('');
+if(l){const p=Math.min(1,Math.max(0,(s-14)/30)),[x,y]=pos(p),c=$('#cr');c.setAttribute('x',x);c.setAttribute('y',y+8);$('#eta').innerHTML=ph==3?'<span>Bon appétit !</span><span>🎉</span>':`<span>Arrivée estimée</span><span>${ph<2?'~ 20 min':Math.max(1,Math.ceil((1-p)*10))+' min'}</span>`;if(ph==3)clearInterval(tm)}else if(ph==2)clearInterval(tm)},300)}
+function done(){clearInterval(tm);closeOv()}
+</script></body></html>
